@@ -11,6 +11,10 @@
   <a href="#english">English</a>
 </p>
 
+<p align="center">
+  <a href="https://osmnnuri.github.io"><b>Güncel görseller için siteme göz at</b></a>
+</p>
+
 ---
 
 ## Demo
@@ -94,7 +98,7 @@ Borsa fiyatları yaklaşık 15 dakika gecikmelidir.
 
 ## İletişim
 
-**osmnnuri** · [GitHub](https://github.com/osmnnuri) · osmannuriyasar57@gmail.com
+**osmnnuri** ·  [Web sitesi](https://osmnnuri.github.io) · [GitHub](https://github.com/osmnnuri) · osmannuriyasar57@gmail.com
 
 ---
 
