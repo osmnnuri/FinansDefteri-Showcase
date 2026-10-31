@@ -38,12 +38,16 @@ hale getirmek ve ay sonunda paranın nereye gittiğini tek bakışta göstermekt
 | **Üç yoldan kayıt** | Sesle ("markete 150 lira harcadım"), banka ekran görüntüsünden ya da elle |
 | **Aylık rapor** | Gelir, gider, tasarruf oranı, kategori dağılımı; PDF olarak kaydetme |
 | **Bütçe** | Kategori bazlı aylık limitler, limit uyarıları, her ay tekrarlayan hatırlatıcılar |
+| **Gelecek / Gidecek** | Alınacak ve verilecek paraları tarihiyle planlama; "Alındı / Verildi" denince gelir / gider olarak ekleme |
+| **Çoklu para birimi** | Her işlem kendi para biriminde; toplamlar seçilen ana birime çevrilerek gösterilir |
 | **Yatırımlar** | Altın, döviz, hisse ve fon alımları; güncel fiyatla değer ve kâr / zarar |
-| **Piyasalar** | TCMB kurları, altın ve gümüş fiyatları, BIST hisseleri ve izleme listesi |
+| **Piyasalar** | TCMB kurları, altın ve gümüş fiyatları, BIST hisseleri ve izleme listesi (altın ve BIST Türkiye bölgesinde) |
+| **Bildirimler** | Hatırlatıcı ve limit uyarıları sistem bildirimi olarak; duyurular push bildirimiyle gelir ve üst bardaki bildirim panelinde okundu işaretlenip silinebilir |
 | **Çevrimdışı** | İnternet yokken girilen kayıtlar bağlantı gelince kendiliğinden eşitlenir |
 | **Güvenlik** | E-posta doğrulamalı hesap, PIN kilidi, kullanıcıya özel veri kuralları |
-| **Kişiselleştirme** | Açık / koyu tema, Türkçe / İngilizce, ayarlanabilir yazı boyutu |
-| **Yedekleme** | JSON yedek ve geri yükleme, CSV dışa aktarma |
+| **Kişiselleştirme** | Açık / koyu tema, 11 dil (Arapçada sağdan sola düzen), ayarlanabilir yazı boyutu |
+| **Yedekleme** | JSON yedek ve geri yükleme, CSV dışa aktarma, 30 gün saklayan geri dönüşüm kutusu |
+| **Geri bildirim** | Uygulama içinden şikâyet / öneri gönderme ve yanıtı görme; gizlilik sayfasından hesap silme |
 
 ## Nasıl çalışıyor?
 
@@ -62,10 +66,12 @@ hale getirmek ve ay sonunda paranın nereye gittiğini tek bakışta göstermekt
 | Arayüz | Flutter (tek kod tabanı: web PWA ve Android) |
 | Kimlik ve veri | Firebase Authentication, Cloud Firestore |
 | Yayın | Firebase Hosting |
+| Bildirim | Firebase Cloud Messaging (push), cihazdaki zamanlanmış bildirimler |
+| Yönetim | Firebase'e bağlanan statik yönetim paneli: kullanıcılar, şikâyetler, hata kayıtları, duyurular |
 | Ekran görüntüsü okuma | Google ML Kit (mobil), Tesseract.js (web); tamamen cihaz üzerinde |
 | Sesli giriş | Cihazın konuşma tanıması + Türkçe cümle çözümleyici |
-| Piyasa verisi | TCMB bülteni, serbest piyasa altın fiyatları, BIST fiyatları (küçük bir aracı fonksiyon üzerinden) |
-| Test | 120 otomatik test |
+| Piyasa verisi | TCMB bülteni, serbest piyasa altın fiyatları, BIST fiyatları (Netlify üzerindeki küçük bir aracı fonksiyon üzerinden) |
+| Test | 198 otomatik test |
 
 ### Öne çıkan teknik işler
 
@@ -86,10 +92,22 @@ hale getirmek ve ay sonunda paranın nereye gittiğini tek bakışta göstermekt
   ondalıklı tutar toplanırken kayan nokta hatası birikmez.
 - **Demo modu.** Demo bağlantısı her ziyaretçiye anonim, yalıtılmış bir hesap
   açar ve örnek verileri o hesaba yazar.
+- **Çoklu dil ve para birimi.** Arayüz metinleri tek kaynaktan 11 dile çevrilir;
+  tarih ve tutarlar dile ve bölgeye göre biçimlenir. Her işlem kendi para
+  biriminde saklanır, raporlar o günün kuruyla ana birime çevrilir.
+- **Aynı gün işlem birleştirme.** Aynı gün aynı açıklamayla girilen işlemler tek
+  kayıtta toplanır; her giriş ayrıca saklanır ve raporda ayrıntısıyla gösterilir.
+- **Duyuru ve bildirim paneli.** Yönetim panelinden yayımlanan duyuru, açık
+  uygulamada banner, kapalıyken push bildirimi olarak gelir; bir kez gelen
+  duyuru bildirim panelinde kalır ve uygulama her açıldığında yeniden
+  gösterilmez.
+- **Sıkı veri kuralları.** Firestore kuralları her kullanıcıyı kendi verisiyle
+  sınırlar ve yazılan alanları, türlerini ve uzunluklarını denetler.
 
 ## Durum
 
-- Web uygulaması yayında (tarayıcıda ve telefonun ana ekranına eklenerek kullanılır).
+- Web uygulaması yayında (tarayıcıda ve telefonun ana ekranına eklenerek kullanılır;
+  iPhone'da ana ekrandan açıldığında tam ekran çalışır).
 - Android sürümü çalışıyor; mağaza yayını planlanıyor.
 - Kaynak kod özel bir depoda tutuluyor.
 
@@ -114,13 +132,21 @@ opens a private, temporary account filled with sample data.
 - **Three ways to add a transaction:** by voice (Turkish), from a bank-app
   screenshot (on-device OCR), or manually.
 - **Monthly reports** with category breakdown and PDF export.
-- **Budgets and recurring reminders.**
+- **Budgets and recurring reminders,** delivered as system notifications.
+- **Planned money in / out** with due dates, turned into income or expense once
+  settled.
+- **Multiple currencies:** each transaction keeps its own currency; totals are
+  converted to the base currency you choose.
 - **Investments:** gold, currencies, stocks and funds valued at current prices,
   with profit / loss.
 - **Markets:** central-bank exchange rates, gold prices, Borsa Istanbul stocks.
 - **Offline-first:** entries made offline sync automatically.
-- **Light / dark theme, Turkish / English, PIN lock, JSON backup and CSV export.**
+- **Notifications panel:** announcements arrive as push notifications and stay
+  in an in-app panel where they can be marked as read or deleted.
+- **In-app feedback** and an admin panel for users, feedback, error reports and
+  announcements.
+- **Light / dark theme, 11 languages (right-to-left for Arabic), PIN lock, JSON
+  backup and CSV export.**
 
-The interface language follows your device (Turkish or English) and can be
-changed in Settings. Voice input and screenshot parsing currently understand
+The interface language follows your device and can be changed in Settings. Voice input and screenshot parsing currently understand
 Turkish only.
